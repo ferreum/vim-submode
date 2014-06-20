@@ -79,6 +79,9 @@ if !exists('g:submode_timeoutlen')
 endif
 
 
+if !exists('g:submode_current_mode')
+  let g:submode_current_mode = ''
+endif
 
 
 "" See s:set_up_options() and s:restore_options().
@@ -422,6 +425,8 @@ endfunction
 
 
 function! s:on_entering_submode(submode)  "{{{2
+  let g:submode_current_mode = a:submode
+  silent doautocmd <nomodeline> User submode-enter
   call s:set_up_options(a:submode)
   return ''
 endfunction
@@ -443,6 +448,8 @@ endfunction
 
 
 function! s:on_leaving_submode(submode)  "{{{2
+  doautocmd <nomodeline> User submode-leave
+  let g:submode_current_mode = ''
   if (s:original_showmode || g:submode_always_show_submode)
   \  && s:may_override_showmode_p(mode())
     if s:insert_mode_p(mode())
